@@ -108,15 +108,15 @@ def forecast_case(case: dict, name: str) -> dict:
             qs = [logistic(lg + z * spread) for z in Z]
         else:
             slope, intercept, res_std, t_last_rate = fit
-            shrunk_slope = 0.7 * slope + 0.3 * median_slope
+            shrunk_slope = 0.85 * slope + 0.15 * median_slope
             target_x = math.log(1.0 + target_hours)
             pred_lg = shrunk_slope * target_x + intercept
             
             last_lg = logit(t_last_rate)
-            max_shift = 1.5 * math.sqrt(horizon_days + 0.1)
+            max_shift = 2.5 * math.sqrt(horizon_days + 0.1)
             pred_lg = max(last_lg - max_shift, min(last_lg + max_shift, pred_lg))
 
-            spread = 0.5 * math.sqrt(horizon_days) + 0.5 * res_std
+            spread = 0.5 * math.sqrt(horizon_days) + 0.3 * res_std
             qs = [logistic(pred_lg + z * spread) for z in Z]
 
         for j in range(1, len(qs)):
